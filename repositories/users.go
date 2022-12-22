@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"dewetour/models"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -25,32 +24,32 @@ func RepositoryUser(db *gorm.DB) *repository {
 
 func (r *repository) FindAcc() ([]models.User, error) {
 	var users []models.User
-	err := r.db.Raw("SELECT * FROM users").Scan(&users).Error
+	err := r.db.Find(&users).Error
 
 	return users, err
 }
 
 func (r *repository) GetAcc(ID int) (models.User, error) {
 	var user models.User
-	err := r.db.Raw("SELECT * FROM users WHERE id=?", ID).Scan(&user).Error
+	err := r.db.First(&user, ID).Error
 
 	return user, err
 }
 
 func (r *repository) MakeAcc(user models.User) (models.User, error) {
-	err := r.db.Exec("INSERT INTO users(name, email, password, phone, address, gender, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?)", user.Name, user.Email, user.Password, user.Phone, user.Address, user.Gender, time.Now(), time.Now()).Error
+	err := r.db.Create(&user).Error
 
 	return user, err
 }
 
 func (r *repository) EditAcc(user models.User, ID int) (models.User, error) {
-	err := r.db.Raw("UPDATE users SET name=?, email=?, password=? WHERE id=?", user.Name, user.Email, user.Password, ID).Scan(&user).Error
+	err := r.db.Save(&user).Error
 
 	return user, err
 }
 
 func (r *repository) DeleteAcc(user models.User, ID int) (models.User, error) {
-	err := r.db.Raw("DELETE FROM users WHERE id=?", ID).Scan(&user).Error
+	err := r.db.Delete(&user).Error
 
 	return user, err
 }
